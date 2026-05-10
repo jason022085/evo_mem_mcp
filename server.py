@@ -8,12 +8,23 @@ import os
 # Reference: https://gofastmcp.com/
 mcp = FastMCP("Evo-Memory")
 
+# Default storage path
+STORAGE_PATH = os.path.join(os.getcwd(), "memory_state.json")
+
 # Initialize the core memory engine
 memory_engine = Memory(
     max_size=1000,
     enable_pruning=True,
     store_successful_only=False
 )
+
+# [NEW] Load existing memory if available
+if os.path.exists(STORAGE_PATH):
+    try:
+        memory_engine.load(STORAGE_PATH)
+        print(f"Loaded {len(memory_engine)} experiences from {STORAGE_PATH}")
+    except Exception as e:
+        print(f"Error loading initial memory: {e}")
 
 @mcp.tool()
 def add_experience(
@@ -23,13 +34,7 @@ def add_experience(
     is_successful: bool = True
 ) -> str:
     """
-    Records a new task experience. This is the 'Evolve' step.
-    
-    Args:
-        input_text: The user prompt or task description.
-        output_text: The model generated response.
-        feedback: Evaluation or correction.
-        is_successful: Boolean indicating if the task was completed successfully.
+    Records a new task experience and persists it to disk.
     """
     entry = MemoryEntry(
         task_id="", 
@@ -40,7 +45,12 @@ def add_experience(
     )
     
     if memory_engine.add(entry):
-        return f"Experience synthesized and evolved. Task ID: {entry.task_id}"
+        # [NEW] Auto-save on every evolution
+        try:
+            memory_engine.save(STORAGE_PATH)
+            return f"Experience evolved and persisted. Task ID: {entry.task_id}"
+        except Exception as e:
+            return f"Evolved in-memory, but failed to save: {str(e)}"
     return "Failed to evolve memory."
 
 @mcp.tool()
