@@ -7,12 +7,22 @@
       "feedback": "Correct",
       "trajectory": null,
       "metadata": {},
-      "timestamp": "2026-05-11T00:43:57.679555",
+      "timestamp": "2026-05-11T00:59:40.123429",
+      "is_successful": true
+    },
+    {
+      "task_id": "d173d16d3e60",
+      "input_text": "What is TSMC?",
+      "output_text": "A Taiwanese semiconductor manufacturer.",
+      "feedback": "Correct",
+      "trajectory": null,
+      "metadata": {},
+      "timestamp": "2026-05-11T01:00:29.724577",
       "is_successful": true
     }
   ],
   "stats": {
-    "total_added": 1,
+    "total_added": 2,
     "total_pruned": 0
   }
 }
